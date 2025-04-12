@@ -1,252 +1,802 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Medical Chatbot with PDF Knowledge Base"
+    />
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Demonstration of Gemini API in a Python Flask Application.">
-
-  <title>Medical Chatbot</title>
-  <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='images/iba_logo.png') }}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary-gradient: linear-gradient(135deg, #6e8efb, #4834d4);
-      --chat-bg: #111827;
-      --message-bg: #1f2937;
-      --user-message-bg: #3730a3;
-      --text-primary: #fff;
-      --text-secondary: #9ca3af;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--chat-bg);
-      color: var(--text-primary);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .chat-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .title {
-      text-align: center;
-      margin-bottom: 1rem;
-      font-size: 2rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .warning {
-      text-align: center;
-      margin-bottom: 2rem;
-      font-size: 1rem;
-      color: var(--text-secondary);
-    }
-
-    .messages-container {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1rem;
-      scroll-behavior: smooth;
-    }
-
-    .message {
-      margin-bottom: 1rem;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeIn 0.3s ease forwards;
-    }
-
-    .message-content {
-      padding: 1rem;
-      border-radius: 1rem;
-      max-width: 80%;
-    }
-
-    .user-message .message-content {
-      background: var(--user-message-bg);
-      margin-left: auto;
-    }
-
-    .bot-message .message-content {
-      background: var(--message-bg);
-    }
-
-    .input-container {
-      padding: 1rem;
-      background: var(--chat-bg);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .chat-input {
-      background: var(--message-bg);
-      border: none;
-      border-radius: 1.5rem;
-      padding: 1rem 1.5rem;
-      color: var(--text-primary);
-      width: calc(100% - 120px);
-    }
-
-    .send-button {
-      background: var(--primary-gradient);
-      border: none;
-      border-radius: 1.5rem;
-      padding: 1rem 2rem;
-      color: white;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-
-    .send-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(110, 142, 251, 0.4);
-    }
-
-    .typing-indicator {
-      display: flex;
-      gap: 0.5rem;
-      padding: 1rem;
-      background: var(--message-bg);
-      border-radius: 1rem;
-      width: fit-content;
-    }
-
-    .typing-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--text-secondary);
-      border-radius: 50%;
-      animation: typing 1.4s infinite ease-in-out;
-    }
-
-    .typing-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .typing-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes typing {
-      0%,
-      100% {
-        transform: translateY(0);
+    <title>MedBot - Medical Chatbot</title>
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='images/Logo.jpg') }}"
+    />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <!-- Custom Styles -->
+    <style>
+      :root {
+        --sidebar-bg: #111827;
+        --main-bg: #1f2937;
+        --message-bg: #374151;
+        --user-message-bg: #4338ca;
+        --input-bg: #111827;
+        --text-primary: #f9fafb;
+        --text-secondary: #9ca3af;
+        --border-color: #374151;
+        --accent-color: #6366f1;
       }
 
-      50% {
-        transform: translateY(-10px);
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--main-bg);
+        color: var(--text-primary);
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
       }
-    }
 
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
+      .app-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex: 1;
       }
-    }
 
-    /* Message Formatting */
-    .bot-message strong {
-      color: #818cf8;
-      font-weight: 600;
-    }
+      /* --- Sidebar Styling --- */
+      .sidebar {
+        width: 200px;
+        background-color: var(--sidebar-bg);
+        padding: 1.5rem 0.5rem;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border-right: none;
+      }
+      .sidebar-header {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        color: var(--text-primary);
+      }
+      .sidebar-logo img {
+        width: 100px;
+        height: 100%;
+        margin-right: 0.25rem;
+      }
+      .sidebar-logo .logo-text {
+        font-weight: 500;
+      }
+      .sidebar-logo i {
+        margin-right: 0.5rem;
+      }
 
-    .bot-message ul {
-      padding-left: 1.5rem;
-      margin: 0.5rem 0;
-    }
-  </style>
-</head>
+      .sidebar-nav {
+        /* flex-grow: 1; Remove flex-grow to allow section below */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 1rem;
+        margin-bottom: 1rem; /* Add bottom margin */
+      }
+      .sidebar-nav-item,
+      .sidebar-nav a.sidebar-nav-item {
+        width: 90%;
+        text-align: left;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 0.375rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+      }
+      .sidebar-nav-item:hover,
+      .sidebar-nav-item.active,
+      .sidebar-nav a.sidebar-nav-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--text-secondary);
+      }
+      #hi {
+        color: var(--text-primary);
+      }
+      .sidebar-nav-item i {
+        margin-right: 0.75rem;
+        width: 18px;
+        text-align: center;
+      }
 
-<body>
-  <div class="chat-container">
-    <div class="title">Welcome to Medical Chatbot</div>
-    <div class="warning">Note: This is an AI chatbot and may make mistakes. Please verify the information provided.</div>
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="alert alert-info" role="alert">
-          {{ messages[0] }}
+      /* Knowledge Base Section Styling */
+      .sidebar-section {
+        margin-top: auto; /* Pushes this section down */
+        padding: 1rem; /* Add padding */
+        padding-bottom: 0; /* Remove bottom padding */
+        border-top: 1px solid var(--border-color); /* Separator line */
+      }
+      .sidebar-section h3 {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+      .sidebar-section p {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+      }
+
+      /* Adjust Logout link to be below Knowledge Base */
+      .sidebar a.logout-link {
+        width: 90%;
+        text-align: left;
+        padding: 0.75rem 1rem;
+        margin: 0 auto; /* Center horizontally */
+        border-radius: 0.375rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        border-top: 1px solid var(--border-color); /* Separator line */
+        margin-top: 1rem; /* Space above logout */
+      }
+      .sidebar a.logout-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+      }
+      .sidebar a.logout-link i {
+        margin-right: 0.75rem;
+        width: 18px;
+        text-align: center;
+      }
+
+      /* Hide original page note */
+      .page-note {
+        display: none !important;
+      }
+
+      /* --- Main Content Area Styling --- */
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background-color: var(--main-bg);
+      }
+
+      /* Top Bar */
+      .top-bar {
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--main-bg);
+        height: 50px;
+      }
+      .top-bar-left {
+        display: flex;
+        align-items: center;
+      }
+      .top-bar-left .menu-icon {
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        cursor: pointer;
+        color: var(--text-secondary);
+      }
+      .top-bar-left .top-bar-title {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+      .top-bar-right {
+        display: flex;
+        align-items: center;
+      }
+      .top-bar-right img {
+        height: 20px;
+        opacity: 0.7;
+        margin-right: 1rem;
+      } /* Space before account button */
+      /* Account Dropdown Styling */
+      .top-bar-right .dropdown .btn-account {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1.4rem; /* Larger icon */
+        padding: 0.25rem 0.5rem;
+        display: flex;
+        align-items: center;
+      }
+      .top-bar-right .dropdown .btn-account:hover,
+      .top-bar-right .dropdown .btn-account:focus {
+        color: var(--text-primary);
+        box-shadow: none;
+      }
+      .top-bar-right .dropdown-menu {
+        background-color: var(--sidebar-bg);
+        border: 1px solid var(--border-color);
+        padding: 0.5rem 0;
+        --bs-dropdown-link-color: var(--text-secondary);
+        --bs-dropdown-link-hover-color: var(--text-primary);
+        --bs-dropdown-link-hover-bg: rgba(255, 255, 255, 0.1);
+        --bs-dropdown-link-active-color: var(--text-primary);
+        --bs-dropdown-link-active-bg: var(--accent-color);
+      }
+      .top-bar-right .dropdown-item {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+      .top-bar-right .dropdown-item i {
+        margin-right: 0.5rem;
+        width: 16px;
+      }
+      .top-bar-right .dropdown-divider {
+        border-top: 1px solid var(--border-color);
+      }
+
+      /* Chat Header */
+      .chat-header {
+        padding: 1rem 1.5rem 0.5rem;
+        border-bottom: none;
+        background-color: transparent;
+      }
+      .chat-header-info .title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0;
+        color: var(--text-primary);
+      }
+
+      /* Upload Form Styling */
+      #upload-form {
+        padding: 1rem 1.5rem;
+        background-color: var(--main-bg); /* Match main background */
+        border-bottom: 1px solid var(--border-color); /* Separator */
+      }
+      #upload-form .form-label {
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+      #upload-form .input-group .form-control {
+        /* Style file input */
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 0.375rem 0 0 0.375rem;
+      }
+      #upload-form .input-group .form-control:focus {
+        box-shadow: none;
+        border-color: var(--accent-color);
+      }
+      /* Style the custom file input text */
+      #upload-form .input-group .form-control::file-selector-button {
+        background-color: var(--message-bg);
+        border: none;
+        color: var(--text-primary);
+        padding: 0.5rem 0.75rem;
+        margin-right: 0.5rem;
+        border-radius: 0.25rem;
+        transition: background-color 0.2s ease;
+        cursor: pointer;
+      }
+      #upload-form .input-group .form-control::file-selector-button:hover {
+        background-color: #4b5563; /* Slightly lighter gray */
+      }
+      #upload-form .input-group .btn-primary {
+        /* Style upload button */
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        border-radius: 0 0.375rem 0.375rem 0;
+        font-size: 0.9rem;
+      }
+      #upload-form .input-group .btn-primary:hover {
+        background-color: #4f46e5;
+        border-color: #4f46e5;
+      }
+      #upload-form .form-text {
+        font-size: 0.8rem;
+      }
+
+      /* Messages Area */
+      .messages-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem 1.5rem;
+        scroll-behavior: smooth;
+      }
+      .message {
+        margin-bottom: 1rem;
+        display: flex;
+        opacity: 0;
+        transform: translateY(10px);
+        animation: fadeIn 0.3s ease forwards;
+      }
+      .message-content {
+        padding: 0.75rem 1rem;
+        border-radius: 0.75rem;
+        max-width: 80%;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        word-wrap: break-word;
+      }
+      .user-message {
+        justify-content: flex-end;
+      }
+      .user-message .message-content {
+        background: var(--user-message-bg);
+        color: var(--text-primary);
+        border-bottom-right-radius: 0.25rem;
+      }
+      .bot-message {
+        justify-content: flex-start;
+      }
+      .bot-message .message-content {
+        background: var(--message-bg);
+        color: var(--text-primary);
+        border-bottom-left-radius: 0.25rem;
+      }
+
+      /* Typing Indicator */
+      .typing-indicator-wrapper {
+      }
+      .typing-indicator {
+        display: flex;
+        gap: 0.3rem;
+        padding: 0.75rem 1rem;
+        background: var(--message-bg);
+        border-radius: 0.75rem;
+        border-bottom-left-radius: 0.25rem;
+        width: fit-content;
+      }
+      .typing-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--text-secondary);
+        border-radius: 50%;
+        animation: typing 1.4s infinite ease-in-out both;
+      }
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      /* Input Area */
+      .input-area {
+        padding: 1rem 1.5rem;
+        background: transparent;
+        border-top: 1px solid var(--border-color);
+      }
+      #chat-form {
+        display: flex;
+        align-items: center;
+        background-color: var(--input-bg);
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-color);
+      }
+      .chat-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 0.5rem 0.75rem;
+        color: var(--text-primary);
+        font-size: 1rem;
+        outline: none;
+      }
+      .chat-input::placeholder {
+        color: var(--text-secondary);
+      }
+      .send-button {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1.25rem;
+        padding: 0.5rem;
+        margin-left: 0.5rem;
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+      .send-button:hover {
+        color: var(--accent-color);
+      }
+
+      /* Bottom Note */
+      .bottom-note {
+        padding: 0.75rem 1.5rem;
+        background-color: transparent;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        text-align: center;
+      }
+
+      /* Animations */
+      @keyframes typing {
+        0%,
+        80%,
+        100% {
+          transform: scale(0);
+        }
+        40% {
+          transform: scale(1);
+        }
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Bot Message Formatting */
+      .bot-message strong {
+        font-weight: 600;
+      }
+      .bot-message ul,
+      .bot-message ol {
+        padding-left: 1.5rem;
+        margin: 0.5rem 0;
+      }
+      .bot-message li {
+        margin-bottom: 0.25rem;
+      }
+      .bot-message pre {
+        background-color: #2d3748;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        margin: 0.5rem 0;
+        overflow-x: auto;
+      }
+      .bot-message code:not(pre > code) {
+        background-color: #2d3748;
+        padding: 0.1rem 0.3rem;
+        border-radius: 0.25rem;
+        font-size: 0.9em;
+      }
+
+      /* Flash message styling */
+      .alert-container {
+        padding: 0 1.5rem;
+        position: absolute;
+        top: 60px;
+        left: 200px;
+        right: 0;
+        z-index: 10;
+      }
+      .alert {
+        margin-top: 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">
+            <img src="../static/images/Logo.png" alt="MedBot Logo" />
+          </div>
         </div>
-      {% endif %}
-    {% endwith %}
-    <form id="upload-form" method="post" enctype="multipart/form-data" action="/upload">
-      <div class="mb-3">
-        <label for="pdf_files" class="form-label">Upload PDF files</label>
-        <input class="form-control" type="file" id="pdf_files" name="pdf_files" multiple>
-      </div>
-      <button type="submit" class="btn btn-primary">Upload PDFs</button>
-    </form>
-    <div class="messages-container" id="messages-container">
-      <!-- Messages will be appended here -->
-    </div>
-    <form id="chat-form" method="post">
-      <div class="input-container">
-        <input type="text" class="chat-input" id="chat-input" name="prompt" placeholder="Type your message...">
-        <button type="submit" class="send-button" id="send-button">Send</button>
-      </div>
-    </form>
-  </div>
+        <div class="sidebar-nav">
+          <div class="sidebar-nav-item active" id="hi">
+            <a href="../templates/index.html">
+              <i class="fas fa-home"></i> Home</a
+            >
+          </div>
+          <div class="sidebar-nav-item" id="hi">
+            <a href="../templates/newchat.html">
+              <i class="fas fa-plus-circle"></i> New Chat</a
+            >
+          </div>
+        </div>
 
-  <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
-  <script>
-    $(document).ready(function () {
-      $("#chat-form").submit(function (event) {
-        event.preventDefault();
-        var question = $("#chat-input").val();
-        if (question.trim() === "") return;
+        <!-- Knowledge Base Section -->
+        <div class="sidebar-section">
+          <h3>Knowledge Base</h3>
+          <!-- Text from image [1] -->
+          <p>
+            Our product uses Google's Gemini for generating summary based on
+            patient report data submitted. Please consult with your doctor
+            before taking any final steps.
+          </p>
+        </div>
 
-        let userMessage = `
-          <div class="message user-message">
-            <div class="message-content">
-              ${question}
+        <!-- Logout Link (Moved below KB section) -->
+        <a href="../templates/Login.html" class="logout-link">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+          <span class="top-bar-title"><h5>MedBot</h5></span>
+
+          <div class="top-bar-right">
+            <!-- Powered by Gemini Logo -->
+            <img
+              src="../static/images/gemini.png"
+              alt="Powered by Gemini"
+              height="160px"
+              width="100%"
+            />
+            <!-- Account Dropdown -->
+            <div class="dropdown">
+              <button
+                class="btn btn-account dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="fas fa-user-circle"></i>
+                <!-- User Account Icon -->
+              </button>
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="dropdownMenuButton"
+              >
+                <li><h6 class="dropdown-header">Account</h6></li>
+                <li>
+                  <a class="dropdown-item" href="#"
+                    ><i class="fas fa-user fa-fw"></i> Profile</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#"
+                    ><i class="fas fa-cog fa-fw"></i> Settings</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('logout') }}"
+                    ><i class="fas fa-sign-out-alt fa-fw"></i> Logout</a
+                  >
+                </li>
+              </ul>
             </div>
-          </div>`;
-        $("#messages-container").append(userMessage);
-        $("#chat-input").val("");
+            <!-- End Account Dropdown -->
+          </div>
+        </div>
 
-        let typingIndicator = `
-          <div class="message bot-message typing-indicator">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-          </div>`;
-        $("#messages-container").append(typingIndicator);
+        <!-- Chat Header -->
 
-        $.ajax({
-          type: "POST",
-          url: "/ask",
-          data: {
-            'prompt': question
-          },
-          success: function (data) {
-            $(".typing-indicator").remove();
-            let cleanedData = data
-              .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-              .replace(/\n/g, "<br>")
-              .replace(/- (.*?)(?=\n|$)/g, "<li>$1</li>");
-            let botMessage = `
-              <div class="message bot-message">
-                <div class="message-content">
-                  ${cleanedData}
-                </div>
-              </div>`;
-            $("#messages-container").append(botMessage);
-          }
+        <!-- Upload Form (Now visible by default) -->
+        <form
+          id="upload-form"
+          method="post"
+          enctype="multipart/form-data"
+          action="{{ url_for('upload') }}"
+        >
+          <div class="mb-2">
+            <label for="pdf_files" class="form-label"
+              >Upload Patient Reports (PDF)</label
+            >
+            <div class="input-group">
+              <input
+                class="form-control form-control-sm"
+                type="file"
+                id="pdf_files"
+                name="pdf_files"
+                multiple
+                aria-describedby="uploadHelp"
+              />
+              <button type="submit" class="btn btn-primary btn-sm">
+                <i class="fas fa-upload"></i> Upload & Process
+              </button>
+            </div>
+            <small id="uploadHelp" class="form-text text-muted">
+              {% if kb_ready %} Knowledge base is active. Upload more PDFs to
+              add information. {% else %} Knowledge base is not yet active.
+              Upload PDFs to enable chat. {% endif %}
+            </small>
+          </div>
+        </form>
+
+        <!-- Message Display Area -->
+        <div class="messages-container" id="messages-container">
+          <!-- Initial Bot Message (or instruction) -->
+          <div class="message bot-message">
+            <!-- Text from image [1] -->
+            <div class="message-content">
+              Hello! How can I help you with your medical questions today?
+              Please upload relevant PDFs if you haven't already.
+            </div>
+          </div>
+          <!-- Chat messages appended here -->
+        </div>
+
+        <!-- Chat Input Area -->
+        <div class="input-area">
+          <form id="chat-form" method="post" action="{{ url_for('ask') }}">
+            <input
+              type="text"
+              class="chat-input"
+              id="chat-input"
+              name="prompt"
+              placeholder="Ask a medical question..."
+              <!--
+              placeholder
+              from
+              image
+              [1]
+              --
+            />
+            <button
+              type="submit"
+              class="send-button"
+              id="send-button"
+              aria-label="Send message"
+              {%
+              if
+              not
+              kb_ready
+              %}disabled{%
+              endif
+              %}
+            >
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- Bottom Note -->
+        <div class="bottom-note">
+          Note: AI may make mistakes. Always verify critical medical information
+          with a qualified healthcare professional.
+        </div>
+      </div>
+      <!-- End Main Content -->
+    </div>
+    <!-- End App Container -->
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Function to toggle upload form visibility
+        // Keep this function if the "Upload PDFs" link in the sidebar should toggle the form
+        // Remove this function if the form should always be visible.
+        function toggleUploadForm() {
+            $('#upload-form').slideToggle(); // Use slideToggle for smooth animation
+        }
+
+      $(document).ready(function () {
+        const messagesContainer = $("#messages-container");
+        const chatInput = $("#chat-input");
+        const chatForm = $("#chat-form");
+        const sendButton = $("#send-button");
+        const kbReady = {{ kb_ready | tojson }};
+
+        function scrollToBottom() { messagesContainer.scrollTop(messagesContainer.prop("scrollHeight")); }
+        scrollToBottom(); // Scroll down initially
+
+        // Remove initial bot message placeholder if you prefer it empty
+        // $('.message.bot-message:first-child').remove();
+
+        function addMessage(sender, content, isHtml = false) {
+            const messageClass = sender === 'user' ? 'user-message' : 'bot-message';
+            const sanitizedContent = isHtml ? content : content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            const messageHTML = `<div class="message ${messageClass}"><div class="message-content">${sanitizedContent}</div></div>`;
+            messagesContainer.append(messageHTML);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            const typingHTML = `<div class="message bot-message typing-indicator-wrapper"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+            messagesContainer.append(typingHTML);
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() { $(".typing-indicator-wrapper").remove(); }
+
+        chatForm.submit(function (event) {
+          event.preventDefault();
+          // if (!kbReady) { return; } // Keep check if upload is mandatory first
+          const question = chatInput.val().trim();
+          if (question === "") return;
+
+          addMessage('user', question);
+          chatInput.val("");
+          showTypingIndicator();
+          chatInput.prop('disabled', true);
+          sendButton.prop('disabled', true);
+
+          $.ajax({
+            type: "POST",
+            url: "{{ url_for('ask') }}",
+            data: { prompt: question },
+            success: function (data) {
+              removeTypingIndicator();
+              let botResponse; let isError = false;
+              if (data && data.error) {
+                  botResponse = `Error: ${data.error}`; isError = true;
+              } else {
+                  // Basic markdown formatting (same as before)
+                  botResponse = data
+                    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+                    .replace(/\*(.*?)\*/g, "<em>$1</em>")
+                    .replace(/``````([\s\S]*?)``````/g, "<pre><code>$1</code></pre>") // Multiline code blocks
+                    .replace(/`([^`]+)`/g, "<code>$1</code>")
+                    .replace(/\n\*/g, "<br>•")
+                    .replace(/\n(\d+\.)/g, "<br>$1") // Numbered lists basic
+                    .replace(/\n/g, "<br>");
+              }
+              addMessage('bot', botResponse, true);
+               if (isError) { messagesContainer.children().last().find('.message-content').css('color', '#f87171'); }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              removeTypingIndicator();
+              const errorText = jqXHR.responseJSON?.error || `Sorry, an error occurred (${textStatus || errorThrown || 'Unknown Error'}). Please try again.`;
+               addMessage('bot', errorText);
+               messagesContainer.children().last().find('.message-content').css('color', '#f87171');
+              console.error("AJAX Error:", textStatus, errorThrown, jqXHR.responseText);
+            },
+            complete: function() {
+                // Re-enable based on kbReady status (or always if chat allowed without KB)
+                // if (kbReady) {
+                    chatInput.prop('disabled', false);
+                    sendButton.prop('disabled', false);
+                    chatInput.focus();
+                // }
+            }
+          });
         });
-      });
-    });
-  </script>
-</body>
 
+        // Update input placeholder and disabled status based on kbReady
+        if (!kbReady) {
+             chatInput.attr('placeholder', 'Please upload PDFs to enable medical questions.');
+             chatInput.prop('disabled', true);
+             sendButton.prop('disabled', true);
+        } else {
+            chatInput.attr('placeholder', 'Ask a medical question...'); // Placeholder from image [1]
+            chatInput.prop('disabled', false);
+            sendButton.prop('disabled', false);
+        }
+
+      });
+    </script>
+  </body>
 </html>

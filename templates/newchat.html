@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Chat - MedBot</title>
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='images/Logo.jpg') }}"
+    />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <!-- Custom Styles (Copied and potentially simplified from index.html) -->
+    <style>
+      :root {
+        --sidebar-bg: #111827;
+        --main-bg: #1f2937; /* Using the slightly lighter main bg from previous examples */
+        --prompt-bg: #111827; /* Darker background for the fake input */
+        --text-primary: #f9fafb;
+        --text-secondary: #9ca3af;
+        --border-color: #374151;
+        --accent-color: #6366f1;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--main-bg);
+        color: var(--text-primary);
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+      }
+      .app-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex: 1;
+      }
+
+      /* --- Sidebar (Simplified for New Chat) --- */
+      .sidebar {
+        width: 200px;
+        background-color: var(--sidebar-bg);
+        padding: 1.5rem 0.5rem;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border-right: none;
+      }
+      .sidebar-header {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        color: var(--text-primary);
+      }
+      .sidebar-logo img {
+        width: 120px;
+        height: 100%;
+        margin-right: 0.5rem;
+      }
+
+      .sidebar-nav {
+        /* Navigation items only */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 1rem;
+      }
+      /* Style nav links */
+      .sidebar-nav a.sidebar-nav-item {
+        width: 90%;
+        text-align: left;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 0.375rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+      }
+      .sidebar-nav a.sidebar-nav-item:hover,
+      .sidebar-nav a.sidebar-nav-item.active {
+        /* Style for active link */
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+      }
+      .sidebar-nav a.sidebar-nav-item i {
+        margin-right: 0.75rem;
+        width: 18px;
+        text-align: center;
+      }
+
+      /* --- Main Content Area --- */
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background-color: var(--main-bg);
+      }
+
+      /* Top Bar (Same as index.html) */
+      .top-bar {
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--main-bg);
+        height: 50px;
+      }
+      .top-bar-left {
+        display: flex;
+        align-items: center;
+      }
+      .top-bar-left .menu-icon {
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        cursor: pointer;
+        color: var(--text-secondary);
+      }
+      .top-bar-left .top-bar-title {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+      .top-bar-right {
+        display: flex;
+        align-items: center;
+      }
+      .top-bar-right img {
+        height: 20px;
+        opacity: 0.7;
+        margin-right: 1rem;
+      }
+      .top-bar-right .dropdown .btn-account {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1.4rem;
+        padding: 0.25rem 0.5rem;
+        display: flex;
+        align-items: center;
+      }
+      .top-bar-right .dropdown .btn-account:hover,
+      .top-bar-right .dropdown .btn-account:focus {
+        color: var(--text-primary);
+        box-shadow: none;
+      }
+      .top-bar-right .dropdown-menu {
+        background-color: var(--sidebar-bg);
+        border: 1px solid var(--border-color);
+        padding: 0.5rem 0;
+        --bs-dropdown-link-color: var(--text-secondary);
+        --bs-dropdown-link-hover-color: var(--text-primary);
+        --bs-dropdown-link-hover-bg: rgba(255, 255, 255, 0.1);
+        --bs-dropdown-link-active-color: var(--text-primary);
+        --bs-dropdown-link-active-bg: var(--accent-color);
+      }
+      .top-bar-right .dropdown-item {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+      .top-bar-right .dropdown-item i {
+        margin-right: 0.5rem;
+        width: 16px;
+      }
+      .top-bar-right .dropdown-divider {
+        border-top: 1px solid var(--border-color);
+      }
+
+      /* --- New Chat Prompt Area --- */
+      .new-chat-content {
+        flex-grow: 1; /* Take remaining vertical space */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Center vertically */
+        align-items: center; /* Center horizontally */
+        padding: 2rem;
+        text-align: center;
+      }
+
+      .new-chat-content .title {
+        font-size: 2rem; /* Larger title */
+        font-weight: 600;
+        margin-bottom: 2rem; /* Space below title */
+        color: var(--text-primary);
+      }
+
+      .ask-prompt {
+        /* The fake input area */
+        background-color: var(--prompt-bg); /* Darker background */
+        color: var(--text-secondary);
+        padding: 1rem 1.5rem;
+        border-radius: 1.5rem; /* Very rounded */
+        width: 80%;
+        max-width: 600px;
+        font-size: 1rem;
+        cursor: pointer; /* Indicate it's clickable (optional) */
+        transition: background-color 0.2s ease;
+        margin-bottom: auto; /* Pushes the note down */
+      }
+      .ask-prompt:hover {
+        background-color: #1f2937; /* Slightly lighter on hover */
+      }
+
+      /* Bottom Note (Same as index.html) */
+      .bottom-note {
+        padding: 0.75rem 1.5rem;
+        background-color: transparent;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        text-align: center;
+        margin-top: auto; /* Stick to bottom */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Sidebar (Simplified) -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">
+            <img src="../static/images/Logo.png" alt="MedBot Logo" />
+          </div>
+        </div>
+        <div class="sidebar-nav">
+          <!-- Link to Home/Main Chat Page -->
+          <a
+            href="../templates/index.html"
+            class="sidebar-nav-item {% if active_page == 'home' %}active{% endif %}"
+          >
+            <i class="fas fa-home"></i> Home
+          </a>
+          <!-- Link to New Chat Page (Current Page) -->
+          <a
+            href="../templates/newchat.html"
+            class="sidebar-nav-item {% if active_page == 'new_chat' %}active{% endif %}"
+          >
+            <i class="fas fa-plus-circle"></i> New Chat
+          </a>
+          <!-- Removed Upload, KB Section, Logout from sidebar for this template -->
+        </div>
+        <!-- Logout is now in the Account dropdown -->
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="main-content">
+        <!-- Top Bar (Same as index.html) -->
+        <div class="top-bar">
+          <span class="top-bar-title">MedBot</span>
+
+          <div class="top-bar-right">
+            <img src="../static/images/gemini.png" alt="Powered by Gemini" />
+            <div class="dropdown">
+              <button
+                class="btn btn-account dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="fas fa-user-circle"></i>
+              </button>
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="dropdownMenuButton"
+              >
+                <li><h6 class="dropdown-header">Account</h6></li>
+                <li>
+                  <a class="dropdown-item" href="#"
+                    ><i class="fas fa-user fa-fw"></i> Profile</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#"
+                    ><i class="fas fa-cog fa-fw"></i> Settings</a
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('logout') }}"
+                    ><i class="fas fa-sign-out-alt fa-fw"></i> Logout</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Centered Prompt Content -->
+        <div class="new-chat-content">
+          <div class="title">Hello, User</div>
+
+          <!-- Fake Input Prompt -->
+          <div
+            class="ask-prompt"
+            onclick="window.location.href='{{ url_for('index') }}'"
+          >
+            <!-- Optional: Click navigates to main chat -->
+            Ask MedBot
+          </div>
+        </div>
+
+        <!-- Bottom Note -->
+        <div class="bottom-note">
+          Note: AI may make mistakes. Always verify critical medical information
+          with a qualified healthcare professional.
+        </div>
+      </div>
+      <!-- End Main Content -->
+    </div>
+    <!-- End App Container -->
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- No complex chat JS needed here -->
+  </body>
+</html>

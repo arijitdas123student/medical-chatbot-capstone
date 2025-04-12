@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - MedBot</title>
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='images/Logo.jpg') }}"
+    />
+    <!-- Font Awesome for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap (optional, for alert styling) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-color: #111827; /* Dark blue-grey background */
+        --container-bg: #1f2937; /* Darker grey container */
+        --input-bg: #374151; /* Input field background */
+        --text-primary: #e5e7eb; /* Light grey text */
+        --text-secondary: #9ca3af; /* Medium grey text */
+        --accent-color: #6366f1; /* Purple button */
+        --accent-hover: #4f46e5; /* Darker purple on hover */
+        --border-color: #374151;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-primary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      .login-container {
+        background-color: var(--container-bg);
+        padding: 2.5rem 3rem; /* Increased padding */
+        border-radius: 0.75rem; /* More rounded corners */
+        width: 100%;
+        max-width: 400px; /* Slightly wider */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        text-align: center;
+      }
+
+      .logo-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+
+      .logo-header img {
+        width: 150px; /* Logo size */
+        height: 75%;
+        margin-right: 0.75rem;
+      }
+
+      .logo-header span {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .login-title {
+        font-size: 1.75rem; /* Larger "Login" */
+        font-weight: 600;
+        margin-bottom: 1.5rem; /* More space below title */
+        color: var(--text-primary);
+      }
+
+      .form-group {
+        margin-bottom: 1.25rem; /* Space between form elements */
+        text-align: left;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem 1rem; /* Comfortable padding */
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 0.375rem;
+        color: var(--text-primary);
+        font-size: 1rem;
+        box-sizing: border-box; /* Include padding and border in element's total width and height */
+      }
+      .form-group input::placeholder {
+        color: var(--text-secondary);
+        opacity: 0.7;
+      }
+      .form-group input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+      }
+
+      .continue-button {
+        width: 100%;
+        padding: 0.85rem; /* Slightly larger button */
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        margin-top: 1rem; /* Space above button */
+        margin-bottom: 1.5rem; /* Space below button */
+      }
+
+      .continue-button:hover {
+        background-color: var(--accent-hover);
+      }
+
+      .social-login {
+        text-align: center;
+      }
+
+      .social-separator {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+      }
+
+      .social-separator::before,
+      .social-separator::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .social-separator:not(:empty)::before {
+        margin-right: 0.5em;
+      }
+
+      .social-separator:not(:empty)::after {
+        margin-left: 0.5em;
+      }
+
+      .social-button {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        /* justify-content: center; /* Center content inside button */
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.375rem;
+        background-color: transparent; /* Transparent background */
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        margin-bottom: 0.75rem; /* Space between social buttons */
+        text-align: left;
+      }
+
+      .social-button:hover {
+        background-color: rgba(255, 255, 255, 0.05); /* Subtle hover */
+      }
+
+      .social-button i {
+        margin-right: 1rem; /* Space between icon and text */
+        font-size: 1.2rem;
+        width: 20px; /* Fixed width for alignment */
+        text-align: center;
+      }
+      /* Specific Icon Colors */
+      .social-button .fa-google {
+        color: #db4437;
+      }
+      .social-button .fa-phone {
+        color: #25d366;
+      }
+
+      /* Flash Messages Styling */
+      .alert-container {
+        position: absolute;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 500px;
+        z-index: 1050; /* Ensure it's above other content */
+      }
+      .alert {
+        padding: 0.8rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: 0.375rem;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      /* Using Bootstrap's default colors, ensure Bootstrap CSS is linked */
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="logo-header">
+        <img src="../static/images/Logo.png" alt="MedBot Logo" />
+      </div>
+      <h2 class="login-title">Login</h2>
+      <form method="post" action="{{ url_for('login') }}">
+        <div class="form-group">
+          <label for="username">Email or Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Enter your username or email"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+        <button type="submit" class="continue-button">
+          <a href="../templates/index.html">Continue</a>
+        </button>
+      </form>
+      <!-- Social Login Buttons (Placeholders) -->
+      <div class="social-login">
+        <div class="social-separator">or</div>
+        <button type="button" class="social-button">
+          <img
+            src="../static/images/mobile.png"
+            alt=""
+            height="100%"
+            width="30px"
+          />
+          &nbsp;&nbsp;&nbsp;Continue with Phone
+        </button>
+        <button type="button" class="social-button">
+          <img
+            src="../static/images/gmail.png"
+            alt=""
+            height="100%"
+            width="30px"
+          />
+          &nbsp;&nbsp;&nbsp;Continue with Gmail
+        </button>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle (needed for alert dismissal) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
