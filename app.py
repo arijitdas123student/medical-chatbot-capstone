@@ -324,3 +324,64 @@ def index():
     # Pass username, kb_ready, and active page identifier
     return render_template('index.html', kb_ready=kb_ready, username=current_user, active_page='home') # Add active_page
 
+@app.route('/ask', methods=['POST'])
+@login_required
+def ask():
+    logger.info(f"--- Entered /ask route with POST method ---") # Log entry
+    logger.info(f"Session username: {session.get('username', 'Unknown')}")
+    logger.info(f"Vector store exists: {vector_store is not None}")
+    logger.info(f"Model exists: {model is not None}")
+
+    if vector_store is None:
+        logger.warning("Chat attempt made before knowledge base (vector store) is ready.")
+        return jsonify({"error": "Knowledge base is not ready. Please upload PDF documents first."}), 400
+
+    if model is None:
+        logger.error("Chat attempt failed: Generative AI model not configured.")
+        return jsonify({"error": "Chat functionality is currently unavailable due to configuration issues."}), 503
+
+    question = request.form.get('prompt', '').strip()
+    logger.info(f"Received question: '{question}'") # Log the question
+
+    if not question:
+        logger.warning("Empty question received.")
+        return jsonify({"error": "Question cannot be empty."}), 400
+
+    try:
+        logger.info("Performing similarity search...")
+        relevant_docs = vector_store.similarity_search(question, k=3)
+        logger.info(f"Retrieved {len(relevant_docs)} relevant documents.")
+        if not relevant_docs:
+            logger.warning("No relevant documents found by similarity search.")
+            # Decide how to handle this - maybe answer without context or inform the user
+            context = "No relevant information found in the uploaded documents."
+        else:
+             context = "\n---\n".join([doc.page_content for doc in relevant_docs])
+             logger.info(f"Context snippet: {context[:200]}...") # Log beginning of context
+
+        # ... (rest of context processing and prompt building) ...
+        logger.info("Context length: " + str(len(context))) # Check context length
+
+        custom_prompt = f"""You are a helpful medical assistant chatbot named MedBot... (rest of prompt same as before)
+
+        Context from documents:
+        ---
+        {context}
+        ---
+
+        User Question: {question}
+
+        Answer:"""
+        logger.info("Generating response from AI model...")
+        response = model.generate_content(custom_prompt)
+        logger.info("Raw AI response received.") # Log that response was received
+
+        # ... (rest of response handling) ...
+        logger.info(f"Final answer prepared: '{answer[:100]}...'")
+        return jsonify(answer if status_code == 200 else {"error": answer}), status_code
+
+    except Exception as e:
+        logger.exception(f"Error during chat interaction for user '{session.get('username', 'Unknown')}'.") # Use logger.exception
+        # Return a more specific error message if possible
+        return jsonify({"error": f"An internal server error occurred in /ask: {str(e)}"}), 500
+

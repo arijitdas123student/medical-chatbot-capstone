@@ -128,9 +128,21 @@
         background-color: rgba(255, 255, 255, 0.1);
         color: var(--text-secondary);
       }
-      #hi {
+      /* --- Add these new rules --- */
+      #hi a {
+        color: var(--text-primary); /* Make the link text white */
+        text-decoration: none; /* Optional: Remove the default underline */
+      }
+
+      /* Optional: Keep hover color consistent if desired */
+      /* If you want the hover state to also be white, add this: */
+
+      #hi a:hover {
         color: var(--text-primary);
       }
+
+      /* --- End of new rules --- */
+
       .sidebar-nav-item i {
         margin-right: 0.75rem;
         width: 18px;

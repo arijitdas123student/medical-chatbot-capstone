@@ -53,7 +53,7 @@
         flex: 1;
       }
 
-      /* --- Sidebar (Simplified for New Chat) --- */
+      /* --- Sidebar (Unchanged from your provided code) --- */
       .sidebar {
         width: 200px;
         background-color: var(--sidebar-bg);
@@ -82,15 +82,12 @@
         height: 100%;
         margin-right: 0.5rem;
       }
-
       .sidebar-nav {
-        /* Navigation items only */
         display: flex;
         flex-direction: column;
         align-items: center;
         margin-top: 1rem;
       }
-      /* Style nav links */
       .sidebar-nav a.sidebar-nav-item {
         width: 90%;
         text-align: left;
@@ -107,7 +104,6 @@
       }
       .sidebar-nav a.sidebar-nav-item:hover,
       .sidebar-nav a.sidebar-nav-item.active {
-        /* Style for active link */
         background-color: rgba(255, 255, 255, 0.1);
         color: var(--text-primary);
       }
@@ -117,7 +113,7 @@
         text-align: center;
       }
 
-      /* --- Main Content Area --- */
+      /* --- Main Content Area (Unchanged from your provided code) --- */
       .main-content {
         flex: 1;
         display: flex;
@@ -126,7 +122,7 @@
         background-color: var(--main-bg);
       }
 
-      /* Top Bar (Same as index.html) */
+      /* Top Bar (Unchanged from your provided code) */
       .top-bar {
         padding: 0.75rem 1.5rem;
         display: flex;
@@ -196,55 +192,63 @@
         border-top: 1px solid var(--border-color);
       }
 
-      /* --- New Chat Prompt Area --- */
+      /* --- New Chat Prompt Area (CSS CHANGES HERE) --- */
       .new-chat-content {
-        flex-grow: 1; /* Take remaining vertical space */
+        flex-grow: 1; /* Allow this container to fill vertical space */
         display: flex;
         flex-direction: column;
-        justify-content: center; /* Center vertically */
-        align-items: center; /* Center horizontally */
+        align-items: center; /* Center items horizontally */
         padding: 2rem;
         text-align: center;
+        /* Remove justify-content: center; to allow vertical distribution */
       }
 
       .new-chat-content .title {
-        font-size: 2rem; /* Larger title */
+        /* Styles for the title text itself */
+        font-size: 2rem;
         font-weight: 600;
-        margin-bottom: 2rem; /* Space below title */
         color: var(--text-primary);
+        /* Vertical positioning control: */
+        margin-top: auto; /* Push down from top */
+        margin-bottom: auto; /* Push up from bottom */
+        /* This combination centers it vertically in the available space */
+        /* Remove fixed margins that might interfere */
       }
 
       .ask-prompt {
-        /* The fake input area */
-        background-color: var(--prompt-bg); /* Darker background */
+        /* Styles for the prompt box */
+        background-color: var(--prompt-bg);
         color: var(--text-secondary);
         padding: 1rem 1.5rem;
-        border-radius: 1.5rem; /* Very rounded */
+        border-radius: 1.5rem;
         width: 80%;
         max-width: 600px;
         font-size: 1rem;
-        cursor: pointer; /* Indicate it's clickable (optional) */
+        cursor: pointer;
         transition: background-color 0.2s ease;
-        margin-bottom: auto; /* Pushes the note down */
+        /* Positioning: */
+        margin-top: auto; /* Push this element towards the bottom */
+        margin-bottom: 2rem; /* Add space above the bottom note */
       }
       .ask-prompt:hover {
-        background-color: #1f2937; /* Slightly lighter on hover */
+        background-color: #1f2937;
       }
 
-      /* Bottom Note (Same as index.html) */
+      /* Bottom Note (Unchanged from your provided code) */
       .bottom-note {
         padding: 0.75rem 1.5rem;
         background-color: transparent;
         color: var(--text-secondary);
         font-size: 0.8rem;
         text-align: center;
-        margin-top: auto; /* Stick to bottom */
+        /* margin-top: auto; /* No longer needed here */
       }
     </style>
   </head>
   <body>
+    <!-- HTML Structure is UNCHANGED from your previously provided code -->
     <div class="app-container">
-      <!-- Sidebar (Simplified) -->
+      <!-- Sidebar -->
       <div class="sidebar">
         <div class="sidebar-header">
           <div class="sidebar-logo">
@@ -252,31 +256,23 @@
           </div>
         </div>
         <div class="sidebar-nav">
-          <!-- Link to Home/Main Chat Page -->
-          <a
-            href="../templates/index.html"
-            class="sidebar-nav-item {% if active_page == 'home' %}active{% endif %}"
-          >
+          <a href="../templates/index.html" class="sidebar-nav-item">
             <i class="fas fa-home"></i> Home
           </a>
-          <!-- Link to New Chat Page (Current Page) -->
           <a
-            href="../templates/newchat.html"
+            href="#"
             class="sidebar-nav-item {% if active_page == 'new_chat' %}active{% endif %}"
           >
             <i class="fas fa-plus-circle"></i> New Chat
           </a>
-          <!-- Removed Upload, KB Section, Logout from sidebar for this template -->
         </div>
-        <!-- Logout is now in the Account dropdown -->
       </div>
 
       <!-- Main Content Area -->
       <div class="main-content">
-        <!-- Top Bar (Same as index.html) -->
+        <!-- Top Bar -->
         <div class="top-bar">
           <span class="top-bar-title">MedBot</span>
-
           <div class="top-bar-right">
             <img src="../static/images/gemini.png" alt="Powered by Gemini" />
             <div class="dropdown">
@@ -317,14 +313,14 @@
 
         <!-- Centered Prompt Content -->
         <div class="new-chat-content">
+          <!-- Title (Centered vertically by auto margins) -->
           <div class="title">Hello, User</div>
 
-          <!-- Fake Input Prompt -->
+          <!-- Fake Input Prompt (Pushed to bottom by its own auto top margin) -->
           <div
             class="ask-prompt"
-            onclick="window.location.href='{{ url_for('index') }}'"
+            onclick="window.location.href='../templates/index.html'"
           >
-            <!-- Optional: Click navigates to main chat -->
             Ask MedBot
           </div>
         </div>

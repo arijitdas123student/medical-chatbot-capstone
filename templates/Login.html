@@ -135,6 +135,22 @@
       .continue-button:hover {
         background-color: var(--accent-hover);
       }
+      /* --- Add these new rules --- */
+
+      /* Target the link directly by its ID */
+      #hi {
+        color: white; /* Force the text color to be white */
+        text-decoration: none; /* Remove the default underline */
+      }
+
+      /* Ensure the color stays white even on hover */
+      /* This overrides any default hover effects on the link itself */
+      #hi:hover {
+        color: white;
+        text-decoration: none; /* Optional: ensure no underline appears on hover */
+      }
+
+      /* --- End of new rules --- */
 
       .social-login {
         text-align: center;
@@ -249,7 +265,7 @@
           />
         </div>
         <button type="submit" class="continue-button">
-          <a href="../templates/index.html">Continue</a>
+          <a href="../templates/index.html" id="hi">Continue</a>
         </button>
       </form>
       <!-- Social Login Buttons (Placeholders) -->
