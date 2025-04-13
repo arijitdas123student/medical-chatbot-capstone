@@ -535,9 +535,11 @@
             >
           </div>
           <div class="sidebar-nav-item" id="hi">
-            <a href="../templates/newchat.html">
+            <!-- {% if session.logged_in %}
+    <a href="{{ url_for('new_chat') }}">New Chat</a>
+{% endif %}
               <i class="fas fa-plus-circle"></i> New Chat</a
-            >
+            > -->
           </div>
         </div>
 
@@ -553,7 +555,7 @@
         </div>
 
         <!-- Logout Link (Moved below KB section) -->
-        <a href="../templates/Login.html" class="logout-link">
+        <a href="{{ url_for('logout') }}" class="logout-link">
           <i class="fas fa-sign-out-alt"></i> Logout
         </a>
       </div>
@@ -562,14 +564,14 @@
       <div class="main-content">
         <!-- Top Bar -->
         <div class="top-bar">
-          <span class="top-bar-title"><h5>MedBot</h5></span>
-
+          <span class="top-bar-title"><h5>MedBot: AI-powered Medical Chatbot</h5></span>
+          
           <div class="top-bar-right">
             <!-- Powered by Gemini Logo -->
             <img
               src="../static/images/gemini.png"
               alt="Powered by Gemini"
-              height="160px"
+              height="260px"
               width="100%"
             />
             <!-- Account Dropdown -->
