@@ -1,7 +1,7 @@
 {
     "version": 2,
     "builds": [
-        {"src": "GOOGLE_API_KEY='AIzaSyB74jnQ56sr4x5JFiVA2AEzIRpqLXRSMUk' app.py", "use": "@vercel/python"}
+        {"src": "app.py", "use": "@vercel/python"}
     ],
     "routes": [
         {"src": "/(.*)", "dest": "app.py"}
